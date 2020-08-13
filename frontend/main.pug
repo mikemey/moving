@@ -1,0 +1,39 @@
+extends layout.pug
+block htmlhead
+  script(src=`${basepath}/static/boxes.js`)
+
+block content
+  .container-fluid
+    h4.my-4.text-center= 'Boxes to move'
+    form.my-2(method="POST" enctype="multipart/form-data")
+      .form-row
+        .col-md-2.col-3.my-2
+          input#boxIdInput.form-control(type="number" name="boxId" placeholder="box #" required)
+        .col-md-7.col-9.my-2
+          input#contentInput.form-control(type="text" name="contents" placeholder="contents")
+        .col-md-2.col-8.my-2
+          input#imageInput.form-control(type="file" name="image" accept="image/*;capture=camera")
+        .col-md-1.col.my-2
+          button#confirmInput.btn.btn-success(type="submit" action="PUT")= 'create...'
+    .modal.fade#detail-modal(tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true")
+      .modal-dialog.modal-dialog-centered
+        .modal-content
+          .modal-body.p-1
+            img#detail-img(src="" onclick="hideImage()" width="100%")
+    table.table.table-responsive
+      thead
+        tr
+          th.col-1(scope="col")= '#'
+          th(scope="col")= 'Contents'
+          th.col-1(scope="col")= 'Image'
+          th.col-1(scope="col")= 'Actions'
+      tbody
+        each box in boxes
+          tr
+            td.boxId(scope="row")= box.boxId
+            td.content= box.contents
+            td
+              img(src=box.image onclick="showImage(this)" width="100%")
+            td.align-middle
+              button.btn.btn-primary(type="button" onclick="editEntry(this)")= 'Edit'
+              button.btn.btn-danger.my-2(type="button" onclick=`deleteEntry('${box.boxId}')`)= 'Delete'

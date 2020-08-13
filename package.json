@@ -1,0 +1,40 @@
+{
+  "name": "moving",
+  "version": "0.0.1",
+  "description": "moving boxes",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "lint": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "mikemey",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "exif-parser": "^0.1.12",
+    "express": "^4.17.1",
+    "moment": "^2.27.0",
+    "mongodb": "^3.5.9",
+    "morgan": "1.10.0",
+    "multer": "^1.4.2",
+    "pug": "^3.0.0",
+    "sharp": "^0.25.4"
+  },
+  "devDependencies": {
+    "standard": "^14.3.4"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ],
+    "globals": [
+      "$"
+    ]
+  }
+}
