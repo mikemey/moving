@@ -1,14 +1,7 @@
 const express = require('express')
 const multer = require('multer')
-const sharp = require('sharp')
 
 const upload = multer()
-const preprocessImage = req => req.file
-  ? sharp(req.file.buffer).rotate().resize({ width: 640 }).toBuffer()
-    .then(imageBuffer => {
-      return { image: `data:image/png;base64,${imageBuffer.toString('base64')}` }
-    })
-  : Promise.resolve({})
 
 const mainRouter = (colls, config) => {
   const router = express.Router()
@@ -22,13 +15,15 @@ const mainRouter = (colls, config) => {
 
   router.post('/', upload.single('image'), (req, res) => {
     const boxId = req.body.boxId
-    const contents = req.body.contents
+    if (!boxId) { return res.sendStatus(400).send('no box-id provided!') }
 
-    return preprocessImage(req)
-      .then(imageObj => {
-        const boxData = Object.assign(imageObj, { boxId, contents })
-        return colls.boxes.updateOne({ boxId }, { $set: boxData }, { upsert: true })
-      })
+    const contents = req.body.contents
+    const imageObj = req.file
+      ? { image: `data:image/png;base64,${req.file.buffer.toString('base64')}` }
+      : {}
+    const boxData = Object.assign(imageObj, { boxId, contents })
+
+    return colls.boxes.updateOne({ boxId }, { $set: boxData }, { upsert: true })
       .then(() => res.redirect(config.serverPath))
       .catch(err => {
         console.log(err)

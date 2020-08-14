@@ -1,10 +1,35 @@
-/* global location confirm */
+/* global location confirm Compressor FormData */
 
 const page = {
   basePath: null
 }
 
-$(() => { page.basePath = $(location).attr('href') })
+$(() => {
+  page.basePath = $(location).attr('href')
+
+  $('#box-form').submit(event => {
+    event = event || window.event
+    event.preventDefault()
+
+    const formData = new FormData()
+    formData.append('boxId', $('#boxIdInput').val())
+    formData.append('contents', $('#contentInput').val())
+
+    const imageFile = document.getElementById('imageInput').files[0]
+    if (imageFile) {
+      return new Compressor(imageFile, {
+        quality: 0.6,
+        maxWidth: 640,
+        success: result => {
+          formData.append('image', result, result.name)
+          uploadBoxForm(formData)
+        }
+      })
+    } else {
+      uploadBoxForm(formData)
+    }
+  })
+})
 
 const editEntry = el => {
   const row = $(el).closest('tr')
@@ -12,8 +37,6 @@ const editEntry = el => {
   $('#contentInput').val(row.find('.content').text())
   $('#confirmInput').text('update...')
 }
-
-const imageWidths = { small: '160px', large: '320px' }
 
 const showImage = el => {
   $('#detail-img').attr('src', $(el).attr('src'))
@@ -31,3 +54,14 @@ const deleteEntry = boxId => {
     })
   }
 }
+
+const uploadBoxForm = form => $.ajax({
+  url: `${page.basePath}`,
+  type: 'POST',
+  data: form,
+  success: () => { window.location = page.basePath },
+  enctype: 'multipart/form-data',
+  processData: false,
+  contentType: false,
+  cache: false
+})
