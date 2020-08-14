@@ -1,13 +1,21 @@
 /* global location confirm Compressor FormData */
 
 const page = {
-  basePath: null
+  basePath: null,
+  existingIds: null
 }
 
 $(() => {
   page.basePath = $(location).attr('href')
+  page.existingIds = $.makeArray($('.boxId')).map(el => $(el).text())
 
   $('#box-form').submit(event => {
+    const boxId = $('#boxIdInput').val()
+    if (page.existingIds.includes(boxId) &&
+      !confirm(`Overwrite existing box ${boxId} ?`)) {
+      return
+    }
+
     showLoader()
     event = event || window.event
     event.preventDefault()
@@ -51,7 +59,7 @@ const showLoader = () => {
 }
 
 const deleteEntry = boxId => {
-  if (confirm(`Delete box: ${boxId}?`)) {
+  if (confirm(`Delete box: ${boxId} ?`)) {
     return $.ajax({
       url: `${page.basePath}/${boxId}`,
       type: 'DELETE',
