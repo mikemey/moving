@@ -16,6 +16,7 @@ block content
           input#imageInput.form-control(type="file" accept="image/*;capture=camera")
         .col-md-1.col.my-2
           button#confirmInput.btn.btn-success(type="submit")= 'create...'
+          #loader.d-none
     .modal.fade#detail-modal(tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true")
       .modal-dialog.modal-dialog-centered
         .modal-content

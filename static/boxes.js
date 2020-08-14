@@ -8,6 +8,7 @@ $(() => {
   page.basePath = $(location).attr('href')
 
   $('#box-form').submit(event => {
+    showLoader()
     event = event || window.event
     event.preventDefault()
 
@@ -42,8 +43,12 @@ const showImage = el => {
   $('#detail-img').attr('src', $(el).attr('src'))
   $('#detail-modal').modal('show')
 }
-
 const hideImage = () => $('#detail-modal').modal('hide')
+
+const showLoader = () => {
+  $('#confirmInput').addClass('d-none')
+  $('#loader').removeClass('d-none')
+}
 
 const deleteEntry = boxId => {
   if (confirm(`Delete box: ${boxId}?`)) {
