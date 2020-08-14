@@ -13,8 +13,7 @@ const defaultConfig = {
   mongodb: {
     url: 'mongodb://127.0.0.1:27017',
     dbName: 'moving',
-    boxesColl: 'boxes',
-    propsColl: 'props'
+    boxesColl: 'boxes'
   }
 }
 
@@ -44,15 +43,12 @@ const createStaticRouter = () => {
   return express.static(path.join(__dirname, 'static'), options)
 }
 
-const prepareCollections = cfg => db => Promise.all([
-  db.collection(cfg.mongodb.boxesColl),
-  db.collection(cfg.mongodb.propsColl)
-]).then(([boxes, props]) => {
-  const colls = { boxes, props }
-  return Promise.all([
-    boxes.createIndex({ boxId: 1 })
-  ]).then(() => colls)
-})
+const prepareCollections = cfg => db => {
+  const boxes = db.collection(cfg.mongodb.boxesColl)
+  const colls = { boxes }
+  return boxes.createIndex({ boxId: 1 })
+    .then(() => colls)
+}
 
 MongoClient.connect(defaultConfig.mongodb.url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(client => client.db(defaultConfig.mongodb.dbName))
