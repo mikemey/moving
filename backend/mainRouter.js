@@ -2,16 +2,27 @@ const express = require('express')
 const multer = require('multer')
 
 const upload = multer()
+const recsPerPage = 5
 
-const mainRouter = (colls, config) => {
+const mainRouter = colls => {
   const router = express.Router()
 
-  router.get('/', (_, res) => colls.boxes.find({})
-    .toArray()
-    .then(boxes => {
-      return res.render('main', { boxes })
-    })
-  )
+  router.get('/', (req, res) => {
+    const boxCursor = colls.boxes.find({})
+    return boxCursor.count()
+      .then(count => {
+        const pageCount = Math.ceil(count / recsPerPage)
+        const pageIx = (req.query.p || pageCount) - 1
+        const startIx = pageIx * recsPerPage
+        return Promise.all([
+          boxCursor.skip(startIx).limit(recsPerPage).toArray(),
+          pageCount,
+          pageIx
+        ])
+      }).then(([boxes, pageCount, currentPageIx]) => {
+        return res.render('main', { boxes, pageCount, currentPageIx })
+      })
+  })
 
   router.post('/', upload.single('image'), (req, res) => {
     const boxId = req.body.boxId
@@ -24,7 +35,7 @@ const mainRouter = (colls, config) => {
     const boxData = Object.assign(imageObj, { boxId, contents })
 
     return colls.boxes.updateOne({ boxId }, { $set: boxData }, { upsert: true })
-      .then(() => res.redirect(config.serverPath))
+      .then(() => res.sendStatus(204))
       .catch(err => {
         console.log(err)
         res.status(500).end()

@@ -27,7 +27,7 @@ const setupServer = colls => {
   app.locals.basepath = defaultConfig.serverPath
 
   app.use(`${defaultConfig.serverPath}/static`, createStaticRouter())
-  app.use(`${defaultConfig.serverPath}`, mainRouter(colls, defaultConfig))
+  app.use(`${defaultConfig.serverPath}`, mainRouter(colls))
 
   return app.listen(defaultConfig.port, defaultConfig.interface)
 }

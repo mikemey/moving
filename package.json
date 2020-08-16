@@ -1,6 +1,6 @@
 {
   "name": "moving",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "moving boxes",
   "engines": {
     "node": ">=10"

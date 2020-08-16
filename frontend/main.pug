@@ -4,8 +4,9 @@ block htmlhead
   script(src=`${basepath}/static/compressor.min.js`)
 
 block content
+  - let page = 0;
   .container-fluid
-    h4.my-4.text-center= 'Boxes to move'
+    h4.my-2.text-center= 'Boxes to move'
     form#box-form.my-2
       .form-row
         .col-md-2.col-3.my-2
@@ -22,6 +23,16 @@ block content
         .modal-content
           .modal-body.p-1
             img#detail-img(src="" onclick="hideImage()" width="100%")
+    .row
+      nav.mx-auto(aria-label="Page navigation example")
+        ul.pagination.justify-content-center
+          li.page-item.disabled
+            a.page-link(href="#")= 'Page:'
+          while page < pageCount
+            - const activeClass = page === currentPageIx ? 'active': ''
+            - page++
+            li.page-item(class=activeClass)
+              a.page-link(href=`${basepath}?p=${page}`)= page
     table.table.table-responsive
       thead
         tr
@@ -38,4 +49,4 @@ block content
               img(src=box.image onclick="showImage(this)" width="100%")
             td.align-middle
               button.btn.btn-primary(type="button" onclick="editEntry(this)")= 'Edit'
-              button.btn.btn-danger.my-2(type="button" onclick=`deleteEntry('${box.boxId}')`)= 'Delete'
+              button.btn.btn-danger.my-1(type="button" onclick=`deleteEntry('${box.boxId}')`)= 'Delete'

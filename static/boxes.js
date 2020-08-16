@@ -1,18 +1,20 @@
 /* global location confirm Compressor FormData */
 
 const page = {
+  fullPath: null,
   basePath: null,
   existingIds: null
 }
 
 $(() => {
-  page.basePath = $(location).attr('href')
+  page.fullPath = $(location).attr('href')
+  page.basePath = page.fullPath.split('?')[0]
   page.existingIds = $.makeArray($('.boxId')).map(el => $(el).text())
 
   $('#box-form').submit(event => {
     const boxId = $('#boxIdInput').val()
-    if (page.existingIds.includes(boxId) &&
-      !confirm(`Overwrite existing box ${boxId} ?`)) {
+    const boxIdExists = page.existingIds.includes(boxId)
+    if (boxIdExists && !confirm(`Overwrite existing box ${boxId} ?`)) {
       return
     }
 
@@ -31,11 +33,11 @@ $(() => {
         maxWidth: 640,
         success: result => {
           formData.append('image', result, result.name)
-          uploadBoxForm(formData)
+          uploadBoxForm(formData, boxIdExists)
         }
       })
     } else {
-      uploadBoxForm(formData)
+      uploadBoxForm(formData, boxIdExists)
     }
   })
 })
@@ -63,16 +65,18 @@ const deleteEntry = boxId => {
     return $.ajax({
       url: `${page.basePath}/${boxId}`,
       type: 'DELETE',
-      success: () => { window.location = page.basePath }
+      success: () => { window.location = page.fullPath }
     })
   }
 }
 
-const uploadBoxForm = form => $.ajax({
+const uploadBoxForm = (form, boxExists) => $.ajax({
   url: `${page.basePath}`,
   type: 'POST',
   data: form,
-  success: () => { window.location = page.basePath },
+  success: () => {
+    window.location = boxExists ? page.fullPath : page.basePath
+  },
   enctype: 'multipart/form-data',
   processData: false,
   contentType: false,
