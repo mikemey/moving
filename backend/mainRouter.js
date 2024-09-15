@@ -12,7 +12,7 @@ const mainRouter = colls => {
     return boxCursor.count()
       .then(count => {
         const pageCount = Math.ceil(count / recsPerPage)
-        const pageIx = (req.query.p || pageCount) - 1
+        const pageIx = (req.query.p || pageCount || 1) - 1
         const startIx = pageIx * recsPerPage
         return Promise.all([
           boxCursor.skip(startIx).limit(recsPerPage).toArray(),
